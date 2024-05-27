@@ -1,0 +1,19 @@
+version: 0.2
+
+env:
+  git-credential-helper: yes
+  shell: bash
+  parameter-store:
+    ssh_key: id_rsa
+    ssh_pub: id_rsa.pub
+
+phases:
+  pre_build:
+    commands:
+      - mkdir -p ~/.ssh
+      - echo "$ssh_key" > ~/.ssh/id_rsa
+      - echo "$ssh_pub" > ~/.ssh/id_rsa.pub
+      - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+      - chmod 600 ~/.ssh/id_rsa
+      - eval "$(ssh-agent -s)"
+      - sh ./scrut-repos/branches.sh
